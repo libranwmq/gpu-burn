@@ -785,6 +785,21 @@ void showHelp() {
     printf("  gpu-burn -i 2 # burns only GPU of index 2\n");
 }
 
+void showProp(CUdevprop device_p) {
+    printf("Total amount of constant memory: %d bytes\n", device_p.totalConstantMemory);
+    printf("Total amount of shared memory per block: %d bytes\n", device_p.sharedMemPerBlock);
+    printf("Total number of registers available per block: %d\n", device_p.regsPerBlock);
+    printf("Maximum number of threads per block: %d\n", device_p.maxThreadsPerBlock);
+    printf("Max dimension size of a thread block (x,y,z): (%d, %d, %d)\n",
+           device_p.maxThreadsDim[0], device_p.maxThreadsDim[1], device_p.maxThreadsDim[2]);
+    printf("Max dimension size of a grid size (x,y,z): (%d, %d, %d)\n",
+           device_p.maxGridSize[0], device_p.maxGridSize[1], device_p.maxGridSize[2]);
+    printf("Maximum memory pitch: %d bytes\n", device_p.memPitch);
+    printf("Texture alignment: %d bytes\n", device_p.textureAlign);
+    printf("SIMD width: %d\n", device_p.SIMDWidth);
+    printf("Clock rate: %d MHz\n", device_p.clockRate / 1000);
+}
+
 // NNN MB
 // NN% <0
 // 0 --- error
@@ -821,13 +836,16 @@ int main(int argc, char **argv) {
             }
             for (int i_dev = 0; i_dev < count; i_dev++) {
                 CUdevice device_l;
+                CUdevprop device_p;
                 char device_name[255];
                 checkError(cuDeviceGet(&device_l, i_dev));
                 checkError(cuDeviceGetName(device_name, 255, device_l));
+                checkError(cuDeviceGetProperties(&device_p, device_l))
                 size_t device_mem_l;
                 checkError(cuDeviceTotalMem(&device_mem_l, device_l));
                 printf("ID %i: %s, %ldMB\n", i_dev, device_name,
                        device_mem_l / 1000 / 1000);
+                showProp(device_p);
             }
             thisParam++;
             return 0;

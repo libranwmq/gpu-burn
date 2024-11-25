@@ -72,7 +72,12 @@ can be set to change the resulting image tag:
     -tc    Try to use Tensor cores (if available)
     -l     List all GPUs in the system
     -i N   Execute only on GPU N
+    -c FILE Use FILE as compare kernel.  Default is compare.ptx
+    -stts T Set timeout threshold to T seconds for using SIGTERM to abort child processes before using SIGKILL.  Default is 30
     -h     Show this help message
-    
+
     Example:
-    gpu_burn -d 3600
+    gpu-burn -d 3600 # burns all GPUs with doubles for an hour
+    gpu-burn -m 50% # burns using 50% of the available GPU memory
+    gpu-burn -l # list GPUs
+    gpu-burn -i 2 # burns only GPU of index 2
